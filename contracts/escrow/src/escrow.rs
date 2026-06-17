@@ -1,64 +1,186 @@
-use soroban_sdk::{contract, contractimpl, Address, Env, Symbol};
-use crate::bounty::{BountyData, BountyStatus};
-use crate::errors::EscrowError;
+// contracts/escrow/src/escrow.rs
+
+use soroban_sdk::{
+    contract,
+    contractimpl,
+    token,
+    Address,
+    BytesN,
+    Env,
+    Symbol,
+};
+
+use crate::{
+    bounty::{BountyData, BountyStatus},
+    errors::EscrowError,
+    storage,
+};
 
 #[contract]
 pub struct EscrowContract;
 
 #[contractimpl]
 impl EscrowContract {
-    /// Create a bounty and lock the reward into escrow.
+    /// Create bounty and lock reward into escrow
     pub fn create_bounty(
-        _env: Env,
-        _creator: Address,
-        _bounty_id: Symbol,
-        _reward_amount: i128,
-        _reward_asset: Address,
-        _deadline: u64,
+        env: Env,
+        creator: Address,
+        bounty_id: Symbol,
+        reward_amount: i128,
+        reward_asset: Address,
+        deadline: u64,
     ) -> Result<(), EscrowError> {
-        // TODO: transfer reward_amount from creator into contract balance,
-        // store BountyData keyed by bounty_id
-        todo!()
+        creator.require_auth();
+
+        let token_client = token::Client::new(&env, &reward_asset);
+
+        token_client.transfer(
+            &creator,
+            &env.current_contract_address(),
+            &reward_amount,
+        );
+
+        let bounty = BountyData {
+            creator,
+            reward_amount,
+            reward_asset,
+            deadline,
+            status: BountyStatus::Open,
+            contributor: None,
+        };
+
+        storage::set_bounty(&env, &bounty_id, &bounty);
+
+        Ok(())
     }
 
-    /// Contributor submits proof of work (off-chain content hash/URI).
+    /// Contributor submits work
     pub fn submit_work(
-        _env: Env,
-        _bounty_id: Symbol,
-        _contributor: Address,
-        _proof_hash: Symbol,
+        env: Env,
+        bounty_id: Symbol,
+        contributor: Address,
+        _proof_hash: BytesN<32>,
     ) -> Result<(), EscrowError> {
-        todo!()
+        contributor.require_auth();
+
+        let mut bounty = storage::get_bounty(&env, &bounty_id)?;
+
+        if env.ledger().timestamp() > bounty.deadline {
+            return Err(EscrowError::DeadlinePassed);
+        }
+
+        if bounty.status != BountyStatus::Open {
+            return Err(EscrowError::AlreadySubmitted);
+        }
+
+        bounty.status = BountyStatus::Submitted;
+        bounty.contributor = Some(contributor);
+
+        storage::set_bounty(&env, &bounty_id, &bounty);
+
+        Ok(())
     }
 
-    /// Only the bounty creator may approve; triggers automatic payout.
+    /// Creator approves submission and payout occurs
     pub fn approve_submission(
-        _env: Env,
-        _bounty_id: Symbol,
-        _creator: Address,
+        env: Env,
+        bounty_id: Symbol,
+        creator: Address,
     ) -> Result<(), EscrowError> {
-        // TODO: verify caller == stored creator, verify status == Submitted,
-        // transfer locked funds to contributor, set status = Completed
-        todo!()
+        creator.require_auth();
+
+        let mut bounty = storage::get_bounty(&env, &bounty_id)?;
+
+        if bounty.creator != creator {
+            return Err(EscrowError::NotCreator);
+        }
+
+        if bounty.status != BountyStatus::Submitted {
+            return Err(EscrowError::InvalidStatus);
+        }
+
+        let contributor = bounty
+            .contributor
+            .clone()
+            .ok_or(EscrowError::InvalidStatus)?;
+
+        let token_client =
+            token::Client::new(&env, &bounty.reward_asset);
+
+        token_client.transfer(
+            &env.current_contract_address(),
+            &contributor,
+            &bounty.reward_amount,
+        );
+
+        bounty.status = BountyStatus::Completed;
+
+        storage::set_bounty(&env, &bounty_id, &bounty);
+
+        Ok(())
     }
 
+    /// Creator rejects submission and reopens bounty
     pub fn reject_submission(
-        _env: Env,
-        _bounty_id: Symbol,
-        _creator: Address,
+        env: Env,
+        bounty_id: Symbol,
+        creator: Address,
     ) -> Result<(), EscrowError> {
-        // TODO: set status back to Open (allow resubmission before deadline)
-        todo!()
+        creator.require_auth();
+
+        let mut bounty = storage::get_bounty(&env, &bounty_id)?;
+
+        if bounty.creator != creator {
+            return Err(EscrowError::NotCreator);
+        }
+
+        if bounty.status != BountyStatus::Submitted {
+            return Err(EscrowError::InvalidStatus);
+        }
+
+        bounty.status = BountyStatus::Open;
+        bounty.contributor = None;
+
+        storage::set_bounty(&env, &bounty_id, &bounty);
+
+        Ok(())
     }
 
-    /// Refund creator if the deadline passed with no approved submission.
-    pub fn refund_creator(_env: Env, _bounty_id: Symbol) -> Result<(), EscrowError> {
-        // TODO: verify ledger timestamp > deadline, status != Completed,
-        // transfer funds back to creator, set status = Expired
-        todo!()
+    /// Refund creator after deadline
+    pub fn refund_creator(
+        env: Env,
+        bounty_id: Symbol,
+    ) -> Result<(), EscrowError> {
+        let mut bounty = storage::get_bounty(&env, &bounty_id)?;
+
+        if env.ledger().timestamp() <= bounty.deadline {
+            return Err(EscrowError::NotExpiredYet);
+        }
+
+        if bounty.status == BountyStatus::Completed {
+            return Err(EscrowError::InvalidStatus);
+        }
+
+        let token_client =
+            token::Client::new(&env, &bounty.reward_asset);
+
+        token_client.transfer(
+            &env.current_contract_address(),
+            &bounty.creator,
+            &bounty.reward_amount,
+        );
+
+        bounty.status = BountyStatus::Expired;
+
+        storage::set_bounty(&env, &bounty_id, &bounty);
+
+        Ok(())
     }
 
-    pub fn get_bounty(_env: Env, _bounty_id: Symbol) -> Option<BountyData> {
-        todo!()
+    pub fn get_bounty(
+        env: Env,
+        bounty_id: Symbol,
+    ) -> Option<BountyData> {
+        storage::get_bounty(&env, &bounty_id).ok()
     }
 }

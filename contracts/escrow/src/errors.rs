@@ -1,3 +1,5 @@
+// contracts/escrow/src/errors.rs
+
 use soroban_sdk::contracterror;
 
 #[contracterror]
@@ -10,4 +12,13 @@ pub enum EscrowError {
     DeadlinePassed = 4,
     NotExpiredYet = 5,
     InvalidStatus = 6,
+
+    // Future-proofing
+    Unauthorized = 7,
+    NotContributor = 8,
+    ContributorMissing = 9,
+    BountyAlreadyExists = 10,
+    InvalidRewardAmount = 11,
+    InvalidDeadline = 12,
+    TransferFailed = 13,
 }
