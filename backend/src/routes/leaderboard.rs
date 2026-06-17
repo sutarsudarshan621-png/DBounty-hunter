@@ -1,11 +1,18 @@
-use axum::{Router, routing::get};
-use crate::state::AppState;
+//backend/src/routes/leaderboard.rs
+use axum::{
+    routing::get,
+    Router,
+};
+
+use crate::{
+    handlers::leaderboard,
+    state::AppState,
+};
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route("/", get(placeholder))
-}
-
-async fn placeholder() -> &'static str {
-    "leaderboard endpoint — TODO"
+        .route(
+            "/",
+            get(leaderboard::get_leaderboard),
+        )
 }

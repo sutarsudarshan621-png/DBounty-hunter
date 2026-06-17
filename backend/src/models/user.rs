@@ -1,3 +1,4 @@
+//backend/src/models/user.rs
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 use chrono::{DateTime, Utc};
