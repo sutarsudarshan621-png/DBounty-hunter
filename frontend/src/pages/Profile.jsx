@@ -83,14 +83,21 @@ const Profile = () => {
     <DashboardLayout>
       <div className="min-h-screen bg-[#0a0e1a] flex justify-center items-center p-6 bg-[url('/profileBG.png')] bg-no-repeat bg-cover bg-center">
         <div className="w-full  max-w-7xl bg-[#111827] border border-[#1e2a3a] rounded-2xl overflow-hidden shadow-2xl">
-          <div className="grid grid-cols-12">
+          <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* LEFT PANEL */}
-            <div className="profile-card col-span-3 bg-[#0f1623] border-r border-[#1e2a3a] p-6 flex flex-col min-h-145">
+            <div className="profile-card lg:col-span-3 bg-[#0f1623] border-r border-[#1e2a3a] p-6 flex flex-col min-h-145">
               <div className="rounded-2xl overflow-hidden border-[3px] border-[#f5c518] aspect-square w-full">
                 <img
                   src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?w=600"
                   alt="Hunter"
-                  className="hunter-image w-full h-full object-cover"
+                  className="
+                  hunter-image
+                  w-full
+                  h-full
+                  object-cover
+                  max-w-70
+                  mx-auto
+                  "
                 />
               </div>
 
@@ -119,7 +126,7 @@ const Profile = () => {
             </div>
 
             {/* CENTER PANEL */}
-            <div className="profile-content col-span-7 p-6 border-r border-[#1e2a3a]">
+            <div className="profile-content lg:col-span-7 p-6 border-r border-[#1e2a3a]">
               <div className="tab-content space-y-4">
                 {activeTab === "profile" && <ProfileStats />}
                 {activeTab === "leaderboard" && <Leaderboard />}
@@ -130,14 +137,20 @@ const Profile = () => {
             </div>
 
             {/* RIGHT NAV */}
-            <div className="col-span-2 bg-[#0a0e1a] py-6 flex flex-col gap-0.5">
+            <div className="
+              lg:col-span-2
+              bg-[#0a0e1a]
+              py-3 lg:py-6
+              flex
+              lg:flex-col
+              overflow-x-auto
+              ">
               {TABS.map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`
-                    profile-nav-btn
-                    w-full text-left px-5 py-3.5 text-xs font-bold uppercase tracking-widest
+                    profile-nav-btn min-w-max lg:w-full text-left px-5 py-3.5 text-xs font-bold uppercase tracking-widest
                     border-l-[3px] transition-all
                     ${
                       activeTab === tab

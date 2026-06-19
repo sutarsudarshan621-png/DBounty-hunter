@@ -89,8 +89,8 @@ const Signup = () => {
   });
 
   return (
-    <div className="signup-container Signup relative">
-      <div className="left-container">
+    <div className="signup-container Signup relative flex flex-col lg:flex-row">
+      <div className="left-container w-full lg:w-1/2">
         <h1 className="h12">DBounty-Hunters</h1>
 
         <div className="toggle-buttons align-center ">
@@ -149,7 +149,7 @@ const Signup = () => {
         </div>
       </div>
 
-      <div className="right-container">
+      <div className="right-container hidden lg:flex lg:w-1/2">
         <div className="triangle"></div>
       </div>
 

@@ -59,8 +59,8 @@ const Hero = () => {
   return (
     <div className="homepage">
       <div className="overlay" />
-      <div className="hero-container">
-        <div className="hero-content">
+      <div className="hero-container relative min-h-screen flex flex-col lg:block">
+        <div className="hero-content px-6 pt-24 lg:px-0">
           <h1>BOUNTY-HUNTER</h1>
 
           <h2>System</h2>

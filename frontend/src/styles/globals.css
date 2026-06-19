@@ -289,3 +289,151 @@ button {
 .hunter-image:hover {
   transform: scale(1.08);
 }
+
+/* ================= HERO MOBILE ================= */
+
+@media (max-width: 1024px) {
+  .homepage {
+    min-height: auto;
+    padding: 100px 0 50px;
+  }
+
+  .hero-content {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 40px;
+  }
+
+  .hero-content h1 {
+    font-size: 48px;
+  }
+
+  .hero-content h2 {
+    font-size: 48px;
+  }
+
+  .gazette {
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
+    width: 95%;
+    max-width: 700px;
+    margin: 0 auto;
+    height: auto;
+  }
+
+  .body1 {
+    flex-direction: column;
+  }
+
+  .poster {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #c7b58d;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 36px;
+  }
+
+  .hero-content h2 {
+    font-size: 42px;
+  }
+
+  .header {
+    font-size: 24px;
+    padding: 15px;
+    text-align: center;
+  }
+
+  .bounty {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .wanted {
+    font-size: 36px;
+  }
+
+  .reward {
+    font-size: 36px;
+  }
+
+  .stamp {
+    font-size: 18px;
+    padding: 8px 16px;
+    top: 120px;
+    left: 15px;
+  }
+
+  .poster img {
+    width: 130px;
+    height: 150px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .profile-card {
+    border-right: none;
+    border-bottom: 1px solid #1e2a3a;
+  }
+
+  .profile-content {
+    border-right: none;
+  }
+
+  .profile-nav-btn:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .triangle {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .left-container,
+  .last-container {
+    width: 100%;
+    padding: 24px;
+  }
+
+  .form {
+    width: 100%;
+  }
+
+  .form input {
+    width: 100%;
+  }
+
+  .toggle-buttons {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .inline {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .h11,
+  .h12 {
+    font-size: 32px;
+    text-align: center;
+  }
+
+  .apperbtn1 {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
