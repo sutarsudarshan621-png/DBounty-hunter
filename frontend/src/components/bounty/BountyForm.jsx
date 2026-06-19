@@ -24,6 +24,10 @@ const BountyForm = ({ onSubmit }) => {
   };
 
   return (
+    <>
+    <h1 className="text-3xl font-bold mb-6">
+        Bounty Form
+      </h1>
     <form
       onSubmit={handleSubmit}
       className="space-y-4"
@@ -71,6 +75,7 @@ const BountyForm = ({ onSubmit }) => {
         Create Bounty
       </button>
     </form>
+    </>
   );
 };
 

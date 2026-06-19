@@ -19,6 +19,10 @@ const SubmissionForm = () => {
   };
 
   return (
+    <>
+    <h1 className="text-3xl font-bold mb-6">
+        Submission Form
+      </h1>
     <form
       onSubmit={handleSubmit}
       className="space-y-4"
@@ -60,6 +64,7 @@ const SubmissionForm = () => {
         Submit Solution
       </button>
     </form>
+    </>
   );
 };
 
