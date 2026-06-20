@@ -1,3 +1,4 @@
+// backend/src/errors.rs
 use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},

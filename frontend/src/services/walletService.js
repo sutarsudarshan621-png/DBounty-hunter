@@ -1,23 +1,30 @@
-// src/services/walletService.js
-
-export const isFreighterInstalled = () => {
-  return typeof window.freighter !== "undefined";
-};
+import {
+  getAddress,
+  requestAccess,
+} from "@stellar/freighter-api";
 
 export const connectWallet = async () => {
   try {
-    if (!isFreighterInstalled()) {
-      throw new Error("Freighter wallet not installed");
-    }
+    const access = await requestAccess();
 
-    const publicKey = await window.freighter.getPublicKey();
+    console.log("Access:", access);
+
+    const result = await getAddress();
+
+    console.log("Address:", result);
+
+    if (!result.address) {
+      throw new Error(
+        "No Freighter account selected"
+      );
+    }
 
     return {
       success: true,
-      publicKey,
+      publicKey: result.address,
     };
   } catch (error) {
-    console.error("Wallet Connection Error:", error);
+    console.error(error);
 
     return {
       success: false,
@@ -25,7 +32,6 @@ export const connectWallet = async () => {
     };
   }
 };
-
 export const disconnectWallet = () => {
   localStorage.removeItem("walletAddress");
 };

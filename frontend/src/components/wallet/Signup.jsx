@@ -1,26 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Signup.css";
-import gsap from "gsap";
-import { useEffect } from "react";
 import { useGSAP } from "@gsap/react";
-import { useState } from "react";   
+import gsap from "gsap";
 import WalletConnectButton from "../wallet/WalletConnectButton";
+import useWallet from "../../hooks/useWallet";
+
 const Signup = () => {
-  const [isLogin, setIsLogin] = useState(false);
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // Real wallet state from Zustand via useWallet hook
+  const { isConnected, walletAddress, handleDisconnect } = useWallet();
 
-  const account = null;
-
-  const handleSignup = (e) => {
-    e.preventDefault();
-  };
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-  };
   // GSAP animations (unchanged)
   useGSAP(() => {
     gsap.from(".left-container", {
@@ -92,61 +81,6 @@ const Signup = () => {
     <div className="signup-container Signup relative flex flex-col lg:flex-row">
       <div className="left-container w-full lg:w-1/2">
         <h1 className="h12">DBounty-Hunters</h1>
-
-        <div className="toggle-buttons align-center ">
-          <button
-            className={!isLogin ? "active-btn" : ""}
-            onClick={() => setIsLogin(false)}
-          >
-            Sign Up
-          </button>
-          <button
-            className={isLogin ? "active-btn" : ""}
-            onClick={() => setIsLogin(true)}
-          >
-            Login
-          </button>
-        </div>
-
-        {!isLogin ? (
-          <form className="form" onSubmit={handleSignup}>
-            <input
-              type="text"
-              placeholder="Enter username"
-              value={username}
-              required
-            />
-            <input type="email" placeholder="Email" value={email} required />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              required
-            />
-            <button type="submit">SIGN UP</button>
-          </form>
-        ) : (
-          <form className="form" onSubmit={handleLogin}>
-            <input type="email" placeholder="Email" value={email} required />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              required
-            />
-            <button type="submit">LOGIN</button>
-          </form>
-        )}
-
-        <div className="alt-buttons">
-          OR
-          <button type="button" className="google-btn">
-            Sign in with Google
-          </button>
-          <button className="connectbtn rounded bg-red-500 font-bold text-white hover:bg-red-600">
-            SIGN OUT
-          </button>
-        </div>
       </div>
 
       <div className="right-container hidden lg:flex lg:w-1/2">
@@ -156,14 +90,24 @@ const Signup = () => {
       <div className="last-container">
         <h1 className="h11">DBounty-Hunters</h1>
         <p>Connect your wallet to get rewards!</p>
+
+        {/* Show truncated address when connected */}
+        {isConnected && walletAddress && (
+          <p className="wallet-address text-sm text-yellow-400 mt-1">
+            {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)}
+          </p>
+        )}
+
         <div className="inline">
-          
-            <WalletConnectButton />
-          
-          {account && (
+          {/* WalletConnectButton handles its own connect/disconnect UI */}
+          <WalletConnectButton />
+
+          {/* Extra explicit disconnect button, visible only when connected */}
+          {isConnected && (
             <button
               className="connectbtn right-2 rounded bg-red-500 font-bold text-white hover:bg-red-600"
               type="button"
+              onClick={handleDisconnect}
             >
               DISCONNECT
             </button>

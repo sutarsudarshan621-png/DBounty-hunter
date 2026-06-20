@@ -5,7 +5,7 @@ import WalletInfo from "../components/wallet/WalletInfo";
 
 const Dashboard = () => {
   return (
-    <DashboardLayout>
+    <>
       <h1 className="text-3xl font-bold mb-6">
         Dashboard
       </h1>
@@ -28,7 +28,7 @@ const Dashboard = () => {
           <p className="text-2xl mt-2">0</p>
         </div>
       </div>
-    </DashboardLayout>
+    </>
   );
 };
 

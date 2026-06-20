@@ -1,14 +1,11 @@
 import { useState } from "react";
 import useWallet from "../../hooks/useWallet";
+import { walletLogin } from "../../api/auth";
 
 const WalletConnectButton = () => {
   const [loading, setLoading] = useState(false);
 
-  const {
-    isConnected,
-    handleConnect,
-    handleDisconnect,
-  } = useWallet();
+  const { isConnected, handleConnect, handleDisconnect } = useWallet();
 
   const connect = async () => {
     setLoading(true);
@@ -17,6 +14,18 @@ const WalletConnectButton = () => {
 
     if (!result.success) {
       alert(result.error);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const auth = await walletLogin(result.publicKey);
+
+      localStorage.setItem("token", auth.token);
+
+      window.location.href = "/dashboard";
+    } catch (err) {
+      alert(err.message);
     }
 
     setLoading(false);

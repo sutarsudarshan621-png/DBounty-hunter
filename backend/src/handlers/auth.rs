@@ -1,3 +1,4 @@
+//backend/src/handlers/auth.rs
 use axum::{
     extract::State,
     Json,
@@ -41,9 +42,16 @@ pub struct Claims {
 }
 
 pub async fn login(
+    
     State(state): State<AppState>,
     Json(payload): Json<LoginRequest>,
 ) -> Result<Json<LoginResponse>, AppError> {
+
+    if payload.wallet_address.trim().is_empty() {
+    return Err(AppError::BadRequest(
+        "wallet address required".to_string(),
+    ));
+}
     let user = services::auth_service::get_or_create_user(
         &state.db,
         &payload.wallet_address,

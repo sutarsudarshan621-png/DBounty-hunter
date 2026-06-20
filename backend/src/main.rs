@@ -1,3 +1,4 @@
+// backend/src/main.rs
 mod config;
 mod db;
 mod errors;

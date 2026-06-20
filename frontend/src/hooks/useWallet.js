@@ -18,10 +18,17 @@ const useWallet = () => {
   const handleConnect = async () => {
     const result = await connectWallet();
 
-    if (result.success) {
-      connect(result.publicKey);
-      localStorage.setItem("walletAddress", result.publicKey);
-    }
+    if (
+  result.success &&
+  result.publicKey
+) {
+  connect(result.publicKey);
+
+  localStorage.setItem(
+    "walletAddress",
+    result.publicKey
+  );
+}
 
     return result;
   };
