@@ -1,6 +1,6 @@
 //backend/src/routes/auth.rs
 use axum::{
-    routing::post,
+    routing::{get, post},
     Router,
 };
 
@@ -11,8 +11,6 @@ use crate::{
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route(
-            "/login",
-            post(auth::login),
-        )
+        .route("/login", post(auth::login))
+        .route("/me", get(auth::me))
 }

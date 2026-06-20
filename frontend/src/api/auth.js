@@ -22,3 +22,44 @@ const response = await fetch(
 
   return data;
 };
+
+export const getCurrentUser = async () => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_URL}/api/auth/me`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  return response.json();
+};
+
+export const createBounty = async (data) => {
+  const token = localStorage.getItem("token");
+
+  const response = await fetch(
+    `${API_URL}/api/bounties`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  return response.json();
+};
+
+export const getBounties = async () => {
+  const response = await fetch(
+    `${API_URL}/api/bounties`
+  );
+
+  return response.json();
+};

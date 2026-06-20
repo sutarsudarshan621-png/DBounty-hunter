@@ -1,4 +1,4 @@
-
+//backend/src/handlers/bounties.rs
 use axum::{
     extract::{Path, State},
     Json,
@@ -16,8 +16,6 @@ use crate::{
 
 #[derive(Debug, Deserialize)]
 pub struct CreateBountyRequest {
-    pub creator_id: Uuid,
-
     pub contract_bounty_id: String,
     pub escrow_contract_address: String,
 
@@ -31,7 +29,6 @@ pub struct CreateBountyRequest {
 
     pub deadline: DateTime<Utc>,
 }
-
 #[derive(Debug, Serialize)]
 pub struct CreateBountyResponse {
     pub bounty: crate::models::Bounty,
@@ -39,11 +36,19 @@ pub struct CreateBountyResponse {
 
 pub async fn create_bounty(
     State(state): State<AppState>,
+    current_user: CurrentUser,
     Json(payload): Json<CreateBountyRequest>,
 ) -> Result<Json<CreateBountyResponse>, AppError> {
+
+    let user = services::auth_service::get_user(
+        &state.db,
+        &current_user.wallet_address,
+    )
+    .await?;
+
     let bounty = services::bounty_service::create_bounty(
         &state.db,
-        payload.creator_id,
+        user.id,
         payload.contract_bounty_id,
         payload.escrow_contract_address,
         payload.title,
@@ -59,7 +64,6 @@ pub async fn create_bounty(
         bounty,
     }))
 }
-
 pub async fn get_bounty(
     State(state): State<AppState>,
     Path(bounty_id): Path<Uuid>,

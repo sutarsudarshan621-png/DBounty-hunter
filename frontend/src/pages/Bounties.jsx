@@ -1,42 +1,64 @@
-// src/pages/Bounties.jsx
-
-import { useMemo, useState } from "react";
-
-import DashboardLayout from "../layouts/DashboardLayout";
-import BountyFilters from "../components/bounty/BountyFilters";
-import BountyList from "../components/bounty/BountyList";
-import useBounties from "../hooks/useBounties";
+import { useEffect, useState } from "react";
+import { getBounties } from "../api/bounties";
 
 const Bounties = () => {
-  const { bounties, loading } = useBounties();
+  const [bounties, setBounties] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [difficulty, setDifficulty] = useState("");
+  useEffect(() => {
+    loadBounties();
+  }, []);
 
-  const filteredBounties = useMemo(() => {
-    if (!difficulty) return bounties;
+  const loadBounties = async () => {
+    try {
+      const data = await getBounties();
 
-    return bounties.filter(
-      (bounty) => bounty.difficulty === difficulty
-    );
-  }, [bounties, difficulty]);
+      setBounties(data);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div>Loading bounties...</div>;
+  }
 
   return (
-    <>
+    <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">
-        Explore Bounties
+        Open Bounties
       </h1>
 
-      <BountyFilters
-        difficulty={difficulty}
-        setDifficulty={setDifficulty}
-      />
+      <div className="grid gap-4">
+        {bounties.map((bounty) => (
+          <div
+            key={bounty.id}
+            className="border rounded-lg p-4"
+          >
+            <h2 className="text-xl font-bold">
+              {bounty.title}
+            </h2>
 
-      {loading ? (
-        <p>Loading bounties...</p>
-      ) : (
-        <BountyList bounties={filteredBounties} />
-      )}
-    </>
+            <p>{bounty.description}</p>
+
+            <div>
+              Reward: {bounty.reward_amount}{" "}
+              {bounty.reward_asset}
+            </div>
+
+            <div>
+              Status: {bounty.status}
+            </div>
+
+            <div>
+              Category: {bounty.category}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 

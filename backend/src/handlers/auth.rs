@@ -14,8 +14,10 @@ use serde::{
     Serialize,
 };
 
+
 use crate::{
     errors::AppError,
+    middleware::current_user::CurrentUser,
     services,
     state::AppState,
 };
@@ -80,4 +82,16 @@ pub async fn login(
     Ok(Json(LoginResponse {
         token,
     }))
+}
+pub async fn me(
+    State(state): State<AppState>,
+    current_user: CurrentUser,
+) -> Result<Json<crate::models::User>, AppError> {
+    let user = services::auth_service::get_user(
+        &state.db,
+        &current_user.wallet_address,
+    )
+    .await?;
+
+    Ok(Json(user))
 }

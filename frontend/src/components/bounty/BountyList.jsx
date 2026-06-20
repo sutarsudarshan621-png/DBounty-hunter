@@ -1,23 +1,48 @@
-// src/components/bounty/BountyList.jsx
+import { useEffect, useState } from "react";
+import { getBounties } from "../../api/bounties";
 
-import BountyCard from "./BountyCard";
+const BountyList = () => {
+  const [bounties, setBounties] =
+    useState([]);
 
-const BountyList = ({ bounties }) => {
-  if (!bounties?.length) {
-    return (
-      <div className="text-center py-10">
-        No bounties found.
-      </div>
-    );
-  }
+  useEffect(() => {
+    const load = async () => {
+      const data =
+        await getBounties();
+
+      setBounties(data);
+    };
+
+    load();
+  }, []);
 
   return (
-    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="space-y-4">
       {bounties.map((bounty) => (
-        <BountyCard
+        <div
           key={bounty.id}
-          bounty={bounty}
-        />
+          className="p-4 border rounded"
+        >
+          <h2>{bounty.title}</h2>
+
+          <p>
+            {bounty.description}
+          </p>
+
+          <p>
+            Reward:
+            {" "}
+            {bounty.reward_amount}
+            {" "}
+            {bounty.reward_asset}
+          </p>
+
+          <p>
+            Status:
+            {" "}
+            {bounty.status}
+          </p>
+        </div>
       ))}
     </div>
   );

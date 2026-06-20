@@ -1,12 +1,17 @@
 import { useState } from "react";
+import { createBounty } from "../../api/bounties";
 
 const BountyForm = ({ onSubmit }) => {
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    reward: "",
-    difficulty: "Easy",
-  });
+const [form, setForm] = useState({
+  contract_bounty_id: "",
+  escrow_contract_address: "",
+  title: "",
+  description: "",
+  reward_amount: "",
+  reward_asset: "XLM",
+  category: "",
+  deadline: "",
+});
 
   const handleChange = (e) => {
     setForm({
@@ -15,14 +20,21 @@ const BountyForm = ({ onSubmit }) => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    if (onSubmit) {
-      onSubmit(form);
-    }
-  };
+  try {
+    const result = await createBounty(form);
 
+    console.log(result);
+
+    alert("Bounty created!");
+  } catch (err) {
+    console.error(err);
+
+    alert("Failed to create bounty");
+  }
+};
   return (
     <>
     <h1 className="text-3xl font-bold mb-6">
@@ -48,25 +60,40 @@ const BountyForm = ({ onSubmit }) => {
         className="w-full p-3 rounded-lg border"
       />
 
-      <input
-        type="number"
-        name="reward"
-        placeholder="Reward"
-        value={form.reward}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg border"
-      />
+<input
+  type="number"
+  name="reward_amount"
+  placeholder="Reward Amount"
+  value={form.reward_amount}
+  onChange={handleChange}
+  className="w-full p-3 rounded-lg border"
+/>
 
-      <select
-        name="difficulty"
-        value={form.difficulty}
-        onChange={handleChange}
-        className="w-full p-3 rounded-lg border"
-      >
-        <option>Easy</option>
-        <option>Medium</option>
-        <option>Hard</option>
-      </select>
+<input
+  name="category"
+  placeholder="Category"
+  value={form.category}
+  onChange={handleChange}
+  className="w-full p-3 rounded-lg border"
+/>
+
+<select
+  name="reward_asset"
+  value={form.reward_asset}
+  onChange={handleChange}
+  className="w-full p-3 rounded-lg border"
+>
+  <option value="XLM">XLM</option>
+  <option value="USDC">USDC</option>
+</select>
+
+<input
+  type="datetime-local"
+  name="deadline"
+  value={form.deadline}
+  onChange={handleChange}
+  className="w-full p-3 rounded-lg border"
+/>
 
       <button
         type="submit"

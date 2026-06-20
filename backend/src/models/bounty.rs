@@ -1,3 +1,4 @@
+//backend/src/models/bounty.rs
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::types::Decimal;

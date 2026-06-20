@@ -9,6 +9,7 @@ import Bounties from "../pages/Bounties";
 import BountyForm from "../components/bounty/BountyForm";
 import SubmissionForm from "../components/bounty/SubmissionForm";
 import Dashboard from "../pages/Dashboard";  
+import BountyList from "../components/bounty/BountyList";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useEffect } from "react";
@@ -17,6 +18,7 @@ const TABS = [
   "profile",
   "Dashboard",  
   "Explore Bounties",
+  "Bounty list",
   "leaderboard",
   "Create Bounty",
   "Submit Bounty",
@@ -134,6 +136,7 @@ const Profile = () => {
                 {activeTab === "Dashboard" && <Dashboard />}
                 {activeTab === "leaderboard" && <Leaderboard />}
                 {activeTab === "Explore Bounties" && <Bounties />}
+                {activeTab === "Bounty list" && <BountyList />}
                 {activeTab === "Create Bounty" && <BountyForm />}
                 {activeTab === "Submit Bounty" && <SubmissionForm />}
               </div>
