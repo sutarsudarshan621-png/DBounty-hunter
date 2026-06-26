@@ -23,7 +23,7 @@ const WalletConnectButton = () => {
 
       localStorage.setItem("token", auth.token);
 
-      window.location.href = "/dashboard";
+      window.location.href = "/profile";
     } catch (err) {
       alert(err.message);
     }

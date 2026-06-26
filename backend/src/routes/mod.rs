@@ -5,9 +5,11 @@ mod users;
 mod bounties;
 mod submissions;
 mod achievements;
-mod leaderboard;
+pub mod leaderboard;
 mod notifications;
 mod analytics;
+
+pub mod transactions;
 
 use axum::{
     http::{

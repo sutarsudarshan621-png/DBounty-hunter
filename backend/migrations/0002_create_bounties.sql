@@ -26,9 +26,10 @@ status TEXT NOT NULL DEFAULT 'open'
             'open',
             'submitted',
             'completed',
-            'expired'
+            'expired',
+            'cancelled'
         )
-    ),
+    )
 
 deadline TIMESTAMPTZ NOT NULL,
 

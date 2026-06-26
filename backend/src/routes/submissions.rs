@@ -11,14 +11,8 @@ use crate::{
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route(
-            "/",
-            post(submissions::create_submission),
-        )
-        .route(
-            "/:submission_id",
-            get(submissions::get_submission),
-        )
+        .route("/", post(submissions::create_submission))
+        .route("/:submission_id", get(submissions::get_submission))
         .route(
             "/bounty/:bounty_id",
             get(submissions::get_bounty_submissions),

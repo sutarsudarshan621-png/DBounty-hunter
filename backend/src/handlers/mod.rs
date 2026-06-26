@@ -7,4 +7,4 @@ pub mod achievements;
 pub mod leaderboard;
 pub mod notifications;
 pub mod analytics;
-
+pub mod transactions;

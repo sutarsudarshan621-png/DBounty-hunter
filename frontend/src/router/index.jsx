@@ -10,6 +10,8 @@ import BountyDetails from "../pages/BountyDetails";
 import CreateBounty from "../pages/CreateBounty";
 import Bounties from "../pages/Bounties";
 import Signup from "../components/wallet/Signup";
+import BountySubmissions from "../pages/BountySubmissions";
+import SubmittedBounties from "../pages/SubmittedBounties";
 
 const router = createBrowserRouter([
   {
@@ -29,7 +31,7 @@ const router = createBrowserRouter([
     element: <Leaderboard />,
   },
   {
-    path: "/bounty/:id",
+    path: "/bounties/:id",
     element: <BountyDetails />,
   },
   {
@@ -43,7 +45,15 @@ const router = createBrowserRouter([
   {
     path: "/signup",
     element: <Signup />,
-  }
+  },
+  {
+  path:"/bounties/:id/submissions",
+  element:<BountySubmissions />,
+  },
+  {
+  path: "/submitted-bounties",
+  element: <SubmittedBounties />,
+},
 ]);
 
 export default router;

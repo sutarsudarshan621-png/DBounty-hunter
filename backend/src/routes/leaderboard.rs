@@ -11,8 +11,5 @@ use crate::{
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route(
-            "/",
-            get(leaderboard::get_leaderboard),
-        )
+        .route("/", get(leaderboard::leaderboard))
 }

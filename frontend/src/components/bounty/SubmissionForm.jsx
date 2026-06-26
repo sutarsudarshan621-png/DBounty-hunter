@@ -1,22 +1,33 @@
 // src/components/bounty/SubmissionForm.jsx
 
 import { useState } from "react";
+import { createSubmission } from "../../api/submissions";
 
-const SubmissionForm = () => {
+const SubmissionForm = ({ bountyId }) => {
   const [githubUrl, setGithubUrl] =
     useState("");
 
   const [demoUrl, setDemoUrl] =
     useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    console.log({
-      githubUrl,
-      demoUrl,
-    });
-  };
+  try {
+    const result =
+      await createSubmission(
+        bountyId,
+        githubUrl,
+        demoUrl
+      );
+
+    console.log(result);
+
+    alert("Submission created");
+  } catch (err) {
+    alert(err.message);
+  }
+};
 
   return (
     <>

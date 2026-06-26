@@ -88,6 +88,12 @@ pub async fn list_open_bounties(
     db::bounties::list_open_bounties(pool)
         .await
 }
+pub async fn list_submitted_bounties(
+    pool: &PgPool,
+) -> AppResult<Vec<Bounty>> {
+    db::bounties::list_submitted_bounties(pool)
+        .await
+}
 
 pub async fn mark_submitted(
     pool: &PgPool,
@@ -121,6 +127,48 @@ pub async fn mark_expired(
         pool,
         bounty_id,
         "expired",
+    )
+    .await
+}
+
+pub async fn get_creator_bounties(
+    pool: &PgPool,
+    creator_id: Uuid,
+) -> AppResult<Vec<Bounty>> {
+    db::bounties::get_creator_bounties(
+        pool,
+        creator_id,
+    )
+    .await
+}
+
+pub async fn update_bounty(
+    pool: &PgPool,
+    bounty_id: Uuid,
+    title: String,
+    description: String,
+    category: Option<String>,
+    deadline: chrono::DateTime<Utc>,
+) -> AppResult<Bounty> {
+
+    db::bounties::update_bounty(
+        pool,
+        bounty_id,
+        &title,
+        &description,
+        category.as_deref(),
+        deadline,
+    )
+    .await
+}
+pub async fn delete_bounty(
+    pool: &PgPool,
+    bounty_id: Uuid,
+) -> AppResult<Bounty> {
+
+    db::bounties::delete_bounty(
+        pool,
+        bounty_id,
     )
     .await
 }

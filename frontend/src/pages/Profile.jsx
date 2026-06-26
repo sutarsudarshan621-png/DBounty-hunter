@@ -7,21 +7,24 @@ import { useState } from "react";
 import Leaderboard from "../pages/Leaderboard";
 import Bounties from "../pages/Bounties";
 import BountyForm from "../components/bounty/BountyForm";
-import SubmissionForm from "../components/bounty/SubmissionForm";
-import Dashboard from "../pages/Dashboard";  
 import BountyList from "../components/bounty/BountyList";
+import TransactionHistory from "../components/profile/TransactionHistory";
+import BountySubmissions from "../pages/BountySubmissions";
+import SubmittedBounties from "../pages/SubmittedBounties";
+import MyBounties from "../pages/MyBounties";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useEffect } from "react";
 
 const TABS = [
   "profile",
-  "Dashboard",  
+  "My Bounties",
   "Explore Bounties",
   "Bounty list",
   "leaderboard",
   "Create Bounty",
-  "Submit Bounty",
+  "SubmittedBounties",
+  "Transactions",
 ];
 
 const Profile = () => {
@@ -50,7 +53,7 @@ const Profile = () => {
       .from(
         ".profile-nav-btn",
         {
-          y:80,
+          y: 80,
           opacity: 1,
           stagger: 0.08,
           duration: 0.6,
@@ -133,24 +136,27 @@ const Profile = () => {
             <div className="profile-content lg:col-span-7 p-6 border-r border-[#1e2a3a]">
               <div className="tab-content space-y-4">
                 {activeTab === "profile" && <ProfileStats />}
-                {activeTab === "Dashboard" && <Dashboard />}
+                {activeTab === "My Bounties" && <MyBounties />}
                 {activeTab === "leaderboard" && <Leaderboard />}
                 {activeTab === "Explore Bounties" && <Bounties />}
                 {activeTab === "Bounty list" && <BountyList />}
                 {activeTab === "Create Bounty" && <BountyForm />}
-                {activeTab === "Submit Bounty" && <SubmissionForm />}
+                {activeTab === "SubmittedBounties" && <SubmittedBounties />}
+                {activeTab === "Transactions" && <TransactionHistory />}
               </div>
             </div>
 
             {/* RIGHT NAV */}
-            <div className="
+            <div
+              className="
               lg:col-span-2
               bg-[#0a0e1a]
               py-3 lg:py-6
               flex
               lg:flex-col
               overflow-x-auto
-              ">
+              "
+            >
               {TABS.map((tab) => (
                 <button
                   key={tab}

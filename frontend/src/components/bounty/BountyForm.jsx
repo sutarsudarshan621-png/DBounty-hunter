@@ -3,8 +3,6 @@ import { createBounty } from "../../api/bounties";
 
 const BountyForm = ({ onSubmit }) => {
 const [form, setForm] = useState({
-  contract_bounty_id: "",
-  escrow_contract_address: "",
   title: "",
   description: "",
   reward_amount: "",
@@ -23,15 +21,18 @@ const [form, setForm] = useState({
 const handleSubmit = async (e) => {
   e.preventDefault();
 
+  const payload = {
+    ...form,
+    reward_amount: parseFloat(form.reward_amount),
+    deadline: new Date(form.deadline).toISOString(),
+  };
+
   try {
-    const result = await createBounty(form);
-
+    const result = await createBounty(payload);
     console.log(result);
-
     alert("Bounty created!");
   } catch (err) {
     console.error(err);
-
     alert("Failed to create bounty");
   }
 };

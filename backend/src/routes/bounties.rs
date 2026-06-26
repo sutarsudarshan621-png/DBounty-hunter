@@ -1,6 +1,6 @@
 //backend/src/routes/bounties.rs
 use axum::{
-    routing::{get, post},
+    routing::{delete, get, post, put},
     Router,
 };
 
@@ -11,16 +11,13 @@ use crate::{
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route(
-            "/",
-            get(bounties::list_open_bounties),
-        )
-        .route(
-            "/",
-            post(bounties::create_bounty),
-        )
-        .route(
-            "/:bounty_id",
-            get(bounties::get_bounty),
-        )
+        // Public
+        .route("/", get(bounties::list_open_bounties))
+        .route("/:bounty_id", get(bounties::get_bounty))
+
+        // Protected
+        .route("/", post(bounties::create_bounty))
+        .route("/my", get(bounties::my_bounties))
+        .route("/:bounty_id", put(bounties::update_bounty))
+        .route("/:bounty_id", delete(bounties::delete_bounty))
 }

@@ -1,10 +1,11 @@
+// backend/src/handlers/submissions.rs
 use axum::{
     extract::{Path, State},
     Json,
 };
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
-
+use crate::middleware::current_user::CurrentUser;
 use crate::{
     errors::AppError,
     services,
@@ -13,8 +14,6 @@ use crate::{
 #[derive(Debug, Deserialize)]
 pub struct CreateSubmissionRequest {
     pub bounty_id: Uuid,
-    pub contributor_id: Uuid,
-
     pub proof_hash: Option<String>,
     pub content: String,
 }
@@ -26,13 +25,21 @@ pub struct SubmissionResponse {
 
 pub async fn create_submission(
     State(state): State<AppState>,
+    current_user: CurrentUser,
     Json(payload): Json<CreateSubmissionRequest>,
 ) -> Result<Json<SubmissionResponse>, AppError> {
+
+    let user = services::auth_service::get_user(
+    &state.db,
+    &current_user.wallet_address,
+        )
+        .await?;
+
     let submission =
         services::submission_service::create_submission(
             &state.db,
             payload.bounty_id,
-            payload.contributor_id,
+            user.id,
             payload.proof_hash,
             payload.content,
         )
