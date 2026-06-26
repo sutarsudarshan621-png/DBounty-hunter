@@ -50,3 +50,20 @@ pub async fn get_user_by_id(
     )
     .await
 }
+
+pub async fn update_profile(
+    pool: &PgPool,
+    user_id: uuid::Uuid,
+    username: &str,
+    bio: Option<&str>,
+    avatar_url: Option<&str>,
+) -> AppResult<User> {
+    db::users::update_profile(
+        pool,
+        user_id,
+        username,
+        bio,
+        avatar_url,
+    )
+    .await
+}

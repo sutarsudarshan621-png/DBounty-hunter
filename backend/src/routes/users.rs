@@ -1,6 +1,6 @@
 //backend/src/routes/users.rs
 use axum::{
-    routing::get,
+    routing::{get, put},
     Router,
 };
 
@@ -11,12 +11,8 @@ use crate::{
 
 pub fn routes() -> Router<AppState> {
     Router::new()
-        .route(
-            "/:user_id",
-            get(users::get_user),
-        )
-        .route(
-            "/leaderboard",
-            get(users::get_leaderboard),
-        )
+        .route("/me", get(users::get_me))
+        .route("/me", put(users::update_me))
+        .route("/leaderboard", get(users::get_leaderboard))
+        .route("/:user_id", get(users::get_user))
 }

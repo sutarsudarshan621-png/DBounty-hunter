@@ -11,7 +11,9 @@ import BountyList from "../components/bounty/BountyList";
 import TransactionHistory from "../components/profile/TransactionHistory";
 import BountySubmissions from "../pages/BountySubmissions";
 import SubmittedBounties from "../pages/SubmittedBounties";
+import AvatarUploader from "../components/profile/AvatarUploader";
 import MyBounties from "../pages/MyBounties";
+import { getProfile, updateProfile } from "../api/profile";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { useEffect } from "react";
@@ -29,6 +31,46 @@ const TABS = [
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
+  const [profile, setProfile] = useState(null);
+  const [editingProfile, setEditingProfile] = useState(false);
+
+  const [profileForm, setProfileForm] = useState({
+    username: "",
+    bio: "",
+    avatar_url: "",
+  });
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const data = await getProfile();
+        setProfile(data);
+        setProfileForm({
+          username: data.username || "",
+          bio: data.bio || "",
+          avatar_url: data.avatar_url || "",
+        });
+      } catch (err) {
+        console.error(err);
+      }
+    };
+
+    loadProfile();
+  }, []);
+
+  const handleProfileSave = async () => {
+    try {
+      const updated = await updateProfile(profileForm);
+
+      setProfile(updated);
+
+      setEditingProfile(false);
+
+      alert("Profile updated!");
+    } catch (err) {
+      console.error(err);
+      alert(err.message);
+    }
+  };
   useGSAP(() => {
     const tl = gsap.timeline();
 
@@ -95,8 +137,8 @@ const Profile = () => {
             <div className="profile-card lg:col-span-3 bg-[#0f1623] border-r border-[#1e2a3a] p-6 flex flex-col min-h-145">
               <div className="rounded-2xl overflow-hidden border-[3px] border-[#f5c518] aspect-square w-full">
                 <img
-                  src="https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?w=600"
-                  alt="Hunter"
+                  src={profile?.avatar_url}
+                  alt="Hunter image"
                   className="
                   hunter-image
                   w-full
@@ -109,20 +151,26 @@ const Profile = () => {
               </div>
 
               <h1 className="text-2xl font-black mt-4 uppercase text-white leading-tight">
-                Elena Ridgeway
+                {profile?.username || "Hunter"}
               </h1>
               <p className="text-[#f5c518] text-xs font-bold uppercase tracking-[2px] mt-1">
-                Native Scriptmaster
+                {profile?.wallet_address?.slice(0, 6)}
+                ...
+                {profile?.wallet_address?.slice(-4)}
               </p>
 
               <p className="text-xs font-bold uppercase tracking-[2px] text-[#6b7a94] mt-5 mb-2">
                 Biography
               </p>
               <p className="text-sm text-[#9aa3b5] leading-relaxed">
-                Elena Ridgeway is a legendary bounty hunter known across the
-                frontier for tracking dangerous criminals and bringing order to
-                lawless territories.
+                {profile?.bio || "Tell the community about yourself."}
               </p>
+              <button
+                onClick={() => setEditingProfile(true)}
+                className="mt-5 w-full bg-[#f5c518] text-black font-bold py-2 rounded-xl hover:opacity-90 transition"
+              >
+                Edit Profile
+              </button>
 
               <button
                 className="mt-auto bg-[#1e2a3a] hover:bg-[#2a3a50] text-[#9aa3b5] hover:text-white font-semibold text-sm px-4 py-2.5 rounded-xl text-left transition-colors"
@@ -178,6 +226,64 @@ const Profile = () => {
           </div>
         </div>
       </div>
+      {editingProfile && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-[#111827] rounded-2xl p-6 w-[450px] space-y-4">
+            <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
+
+            <input
+              value={profileForm.username}
+              onChange={(e) =>
+                setProfileForm({
+                  ...profileForm,
+                  username: e.target.value,
+                })
+              }
+              placeholder="Username"
+              className="w-full rounded-lg p-3 bg-[#1f2937] text-white"
+            />
+
+            <textarea
+              value={profileForm.bio}
+              onChange={(e) =>
+                setProfileForm({
+                  ...profileForm,
+                  bio: e.target.value,
+                })
+              }
+              placeholder="Bio"
+              rows={4}
+              className="w-full rounded-lg p-3 bg-[#1f2937] text-white"
+            />
+
+            <AvatarUploader
+              currentAvatar={profileForm.avatar_url}
+              onUploadComplete={(url) =>
+                setProfileForm({
+                  ...profileForm,
+                  avatar_url: url,
+                })
+              }
+            />
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setEditingProfile(false)}
+                className="px-5 py-2 rounded bg-gray-600"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleProfileSave}
+                className="px-5 py-2 rounded bg-[#f5c518] text-black font-bold"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 };

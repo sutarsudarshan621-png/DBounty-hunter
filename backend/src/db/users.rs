@@ -1,3 +1,4 @@
+//backend/src/db/users.rs
 use sqlx::PgPool;
 use uuid::Uuid;
 
@@ -123,4 +124,54 @@ pub async fn leaderboard(
     .await?;
 
     Ok(users)
+}
+
+pub async fn get_current_user(
+    pool: &PgPool,
+    wallet_address: &str,
+) -> AppResult<User> {
+    let user = sqlx::query_as::<_, User>(
+        r#"
+        SELECT *
+        FROM users
+        WHERE wallet_address = $1
+        "#,
+    )
+    .bind(wallet_address)
+    .fetch_one(pool)
+    .await?;
+
+    Ok(user)
+}
+
+pub async fn update_profile(
+    pool: &PgPool,
+    user_id: Uuid,
+    username: &str,
+    bio: Option<&str>,
+    avatar_url: Option<&str>,
+) -> AppResult<User> {
+
+    let user = sqlx::query_as::<_, User>(
+        r#"
+        UPDATE users
+        SET
+
+            username = $2,
+            bio = $3,
+            avatar_url = $4
+
+        WHERE id = $1
+
+        RETURNING *
+        "#,
+    )
+    .bind(user_id)
+    .bind(username)
+    .bind(bio)
+    .bind(avatar_url)
+    .fetch_one(pool)
+    .await?;
+
+    Ok(user)
 }
