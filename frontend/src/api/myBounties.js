@@ -21,9 +21,10 @@ export const getMyBounties = async () => {
   return data;
 };
 
-export const updateBounty = async (id, bounty) => {
+
+export const updateBounty = async (bountyId, bounty) => {
   const response = await fetch(
-    `${API_URL}/api/bounties/${id}`,
+    `${API_URL}/api/bounties/${bountyId}`,
     {
       method: "PUT",
       headers: {
@@ -34,7 +35,8 @@ export const updateBounty = async (id, bounty) => {
     }
   );
 
-  const data = await response.json();
+  const text = await response.text();
+  const data = text ? JSON.parse(text) : {};
 
   if (!response.ok) {
     throw new Error(data.error || "Update failed");
